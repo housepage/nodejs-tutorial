@@ -33,6 +33,12 @@ Andrew Gall
 <li>Javascript?</li>
 <li>JQuery?</li>
 </ul>
+</div><div class="section slide level2" id="follow-along">
+<h1 id="follow-along">Follow Along</h1>
+<ul>
+<li>Presentation: <a href="http://housepage.org/nodejs.html">http://housepage.org/nodejs.html</a></li>
+<li>Code: <a href="http://github.com/housepage/nodejs-tutorial">http://github.com/housepage/nodejs-tutorial</a></li>
+</ul>
 </div>
 <div class="section titleslide slide level1" id="javascript"><h1 id="javascript">Javascript</h1></div><div class="section slide level2" id="what-have-you-done">
 <h1 id="what-have-you-done">What have you done?</h1>
@@ -156,6 +162,70 @@ exports.start = start;</code></pre>
 <p>Now this file can be imported elsewhere and will expose that function or property. So we can do:</p>
 <pre><code>var server = require('./server');
 server.start()</code></pre>
+</div>
+<div class="section titleslide slide level1" id="routing"><h1 id="routing">Routing</h1></div><div class="section slide level2" id="making-the-router">
+<h1 id="making-the-router">Making the Router</h1>
+<p>We start simply and just do a print in our router.</p>
+<pre><code>function route(pathname) {
+  console.log(&quot;About to route a request for &quot; + pathname);
+}
+
+exports.route = route; </code></pre>
+</div><div class="section slide level2" id="wiring-the-router-in">
+<h1 id="wiring-the-router-in">Wiring the Router In</h1>
+<p>Now, we add this routing to our HTTP Server:</p>
+<pre><code>function start(route) {
+  function onRequest(request, response) {
+    /* ... */
+
+    route(pathname);
+
+    response.writeHead(200, {&quot;Content-Type&quot;: &quot;text/plain&quot;});
+    response.write(&quot;Hello World&quot;);
+    response.end();
+  }
+
+  /* ... */
+}</code></pre>
+</div><div class="section slide level2" id="final-piece">
+<h1 id="final-piece">Final Piece</h1>
+<p>Importing our router and passing it into our HTTP Server:</p>
+<pre><code>var server = require(&quot;./server&quot;);
+var router = require(&quot;./router&quot;);
+
+server.start(router.route);</code></pre>
+<p>Now we have a basic router. It doesn't do anything but now we can write our request handlers.</p>
+</div>
+<div class="section titleslide slide level1" id="request-handlers"><h1 id="request-handlers">Request Handlers</h1></div><div class="section slide level2" id="basic-request-handlers">
+<h1 id="basic-request-handlers">Basic Request Handlers</h1>
+<pre><code>function start() {
+  console.log(&quot;Request handler 'start' was called.&quot;);
+}
+
+function upload() {
+  console.log(&quot;Request handler 'upload' was called.&quot;);
+}
+
+exports.start = start;
+exports.upload = upload;</code></pre>
+<p>requestHandlers.js</p>
+</div><div class="section slide level2" id="wire-this-up-in-app.js">
+<h1 id="wire-this-up-in-app.js">Wire This Up in App.js</h1>
+<p>var server = require(&quot;./server&quot;); var router = require(&quot;./router&quot;); var requestHandlers = require(&quot;./requestHandlers&quot;);</p>
+<p>var handle = {} handle[&quot;/&quot;] = requestHandlers.start; handle[&quot;/start&quot;] = requestHandlers.start; handle[&quot;/upload&quot;] = requestHandlers.upload;</p>
+<p>server.start(router.route, handle);</p>
+<p>We create a dictionary where we defined what paths use what handlers.</p>
+</div>
+<div class="section titleslide slide level1" id="conclusion"><h1 id="conclusion">Conclusion</h1></div><div class="section slide level2" id="questions">
+<h1 id="questions">Questions?</h1>
+</div><div class="section slide level2" id="links">
+<h1 id="links">Links</h1>
+<ul>
+<li>Presentation based on <a href="http://www.nodebeginner.org/">The Node Beginner Book</a></li>
+<li><a href="http://debuggable.com/posts/understanding-node-js:4bd98440-45e4-4a9a-8ef7-0f7ecbdd56cb">Understanding node.js</a></li>
+<li><a href="http://nodejs.org">Node.JS Website</a></li>
+<li><a href="http://github.com/ManuelKiessling/NodeBeginnerBook/tree/master/code/application">Complete Source Code for Application</a></li>
+</ul>
 </div>
 </body>
 </html>

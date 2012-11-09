@@ -19,8 +19,8 @@
 
 ## Follow Along
 
-Presentation: [http://housepage.org/nodejs.html](http://housepage.org/nodejs.html)
-Code: [http://github.com/housepage/nodejs-tutorial](http://github.com/housepage/nodejs-tutorial)
+* Presentation: [http://housepage.org/nodejs.html](http://housepage.org/nodejs.html)
+* Code: [http://github.com/housepage/nodejs-tutorial](http://github.com/housepage/nodejs-tutorial)
 
 # Javascript
 
@@ -211,6 +211,21 @@ Now we have a basic router. It doesn't do anything but now we can write our requ
     exports.upload = upload;
 
 requestHandlers.js
+
+## Wire This Up in App.js
+
+  var server = require("./server");
+  var router = require("./router");
+  var requestHandlers = require("./requestHandlers");
+
+  var handle = {}
+  handle["/"] = requestHandlers.start;
+  handle["/start"] = requestHandlers.start;
+  handle["/upload"] = requestHandlers.upload;
+
+  server.start(router.route, handle);
+
+We create a dictionary where we defined what paths use what handlers.
 
 # Conclusion
 

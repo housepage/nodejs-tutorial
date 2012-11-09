@@ -59,6 +59,18 @@
 \end{itemize}
 \end{frame}
 
+\begin{frame}\frametitle{Follow Along}
+
+\begin{itemize}
+\item
+  Presentation:
+  \href{http://housepage.org/nodejs.html}{http://housepage.org/nodejs.html}
+\item
+  Code:
+  \href{http://github.com/housepage/nodejs-tutorial}{http://github.com/housepage/nodejs-tutorial}
+\end{itemize}
+\end{frame}
+
 \section{Javascript}
 
 \begin{frame}\frametitle{What have you done?}
@@ -277,14 +289,128 @@ function start() {
 
 exports.start = start;
 \end{verbatim}
-We just need to add the line seen at the bottom here and now this file
-can be imported elsewhere and will expose that function or property. So
-we can do:
+We just need to add the line seen at the bottom here.
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Using our new module}
+
+Now this file can be imported elsewhere and will expose that function or
+property. So we can do:
 
 \begin{verbatim}
 var server = require('./server');
-server.start() 
+server.start()
 \end{verbatim}
+\end{frame}
+
+\section{Routing}
+
+\begin{frame}[fragile]\frametitle{Making the Router}
+
+We start simply and just do a print in our router.
+
+\begin{verbatim}
+function route(pathname) {
+  console.log("About to route a request for " + pathname);
+}
+
+exports.route = route; 
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Wiring the Router In}
+
+Now, we add this routing to our HTTP Server:
+
+\begin{verbatim}
+function start(route) {
+  function onRequest(request, response) {
+    /* ... */
+
+    route(pathname);
+
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("Hello World");
+    response.end();
+  }
+
+  /* ... */
+}
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Final Piece}
+
+Importing our router and passing it into our HTTP Server:
+
+\begin{verbatim}
+var server = require("./server");
+var router = require("./router");
+
+server.start(router.route);
+\end{verbatim}
+Now we have a basic router. It doesn't do anything but now we can write
+our request handlers.
+
+\end{frame}
+
+\section{Request Handlers}
+
+\begin{frame}[fragile]\frametitle{Basic Request Handlers}
+
+\begin{verbatim}
+function start() {
+  console.log("Request handler 'start' was called.");
+}
+
+function upload() {
+  console.log("Request handler 'upload' was called.");
+}
+
+exports.start = start;
+exports.upload = upload;
+\end{verbatim}
+requestHandlers.js
+
+\end{frame}
+
+\begin{frame}\frametitle{Wire This Up in App.js}
+
+var server = require(``./server''); var router = require(``./router'');
+var requestHandlers = require(``./requestHandlers'');
+
+var handle = \{\} handle{[}``/''{]} = requestHandlers.start;
+handle{[}``/start''{]} = requestHandlers.start; handle{[}``/upload''{]}
+= requestHandlers.upload;
+
+server.start(router.route, handle);
+
+We create a dictionary where we defined what paths use what handlers.
+
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}\frametitle{Questions?}
+
+\end{frame}
+
+\begin{frame}\frametitle{Links}
+
+\begin{itemize}
+\item
+  Presentation based on \href{http://www.nodebeginner.org/}{The Node
+  Beginner Book}
+\item
+  \href{http://debuggable.com/posts/understanding-node-js:4bd98440-45e4-4a9a-8ef7-0f7ecbdd56cb}{Understanding
+  node.js}
+\item
+  \href{http://nodejs.org}{Node.JS Website}
+\item
+  \href{http://github.com/ManuelKiessling/NodeBeginnerBook/tree/master/code/application}{Complete
+  Source Code for Application}
+\end{itemize}
 \end{frame}
 
 \end{document}
