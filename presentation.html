@@ -215,6 +215,96 @@ exports.upload = upload;</code></pre>
 <p>var handle = {} handle[&quot;/&quot;] = requestHandlers.start; handle[&quot;/start&quot;] = requestHandlers.start; handle[&quot;/upload&quot;] = requestHandlers.upload;</p>
 <p>server.start(router.route, handle);</p>
 <p>We create a dictionary where we defined what paths use what handlers.</p>
+</div><div class="section slide level2" id="add-support-for-this-to-our-server">
+<h1 id="add-support-for-this-to-our-server">Add support for this to our server</h1>
+<pre><code>var http = require(&quot;http&quot;);
+var url = require(&quot;url&quot;);
+
+function start(route, handle) {
+  function onRequest(request, response) {
+    /* ... */
+
+    route(handle, pathname);
+
+    /* ... */
+  }
+
+  /* ... */
+}
+
+exports.start = start;</code></pre>
+<p>Now, we are passing that list of handlers into our routing function where we can do some work with it.</p>
+</div><div class="section slide level2" id="using-that-information-to-do-some-routing">
+<h1 id="using-that-information-to-do-some-routing">Using That Information To Do Some Routing</h1>
+<pre><code>function route(handle, pathname) {
+  console.log(&quot;About to route a request for &quot; + pathname);
+  if (typeof handle[pathname] === 'function') {
+    handle[pathname]();
+  } else {
+    console.log(&quot;No request handler found for &quot; + pathname);
+  }
+}
+
+exports.route = route;</code></pre>
+<p>We look in our dictionary of handlers to see which handler we should activate. If we find a valid path, we do something. If not, it just prints that to your logs.</p>
+</div><div class="section slide level2" id="heading-over-to-the-code-to-run-this.">
+<h1 id="heading-over-to-the-code-to-run-this.">Heading over to the code to run this.</h1>
+<p>Let's do this.</p>
+<p>Now, we have request handlers that are activated but let's actually do something with them.</p>
+</div>
+<div class="section titleslide slide level1" id="returning-content"><h1 id="returning-content">Returning Content</h1></div><div class="section slide level2" id="passing-in-the-response-object">
+<h1 id="passing-in-the-response-object">Passing in the Response object</h1>
+<pre><code>function start(route, handle) {
+  function onRequest(request, response) {
+    /* ... */
+
+    route(handle, pathname, response);
+
+    /* We get rid of the code here that immediately responds with Hello World */
+  }
+
+  /* ... */
+}</code></pre>
+<p>We start by passing that response object into our routing function.</p>
+</div><div class="section slide level2" id="modifying-our-routing-function">
+<h1 id="modifying-our-routing-function">Modifying our Routing function</h1>
+<pre><code>function route(handle, pathname, response) {
+  console.log(&quot;About to route a request for &quot; + pathname);
+  if (typeof handle[pathname] === 'function') {
+    handle[pathname](response);
+  } else {
+    console.log(&quot;No request handler found for &quot; + pathname);
+    response.writeHead(404, {&quot;Content-Type&quot;: &quot;text/plain&quot;});
+    response.write(&quot;404 Not found&quot;);
+    response.end();
+  }
+}</code></pre>
+<p>We pass that response on to the request handler and if there is none, gives a useful error.</p>
+</div><div class="section slide level2" id="finally-adding-to-the-request-handlers">
+<h1 id="finally-adding-to-the-request-handlers">Finally Adding to the Request Handlers</h1>
+<pre><code>var exec = require(&quot;child_process&quot;).exec;
+
+function start(response) {
+  console.log(&quot;Request handler 'start' was called.&quot;);
+
+  exec(&quot;ls -lah&quot;, function (error, stdout, stderr) {
+    response.writeHead(200, {&quot;Content-Type&quot;: &quot;text/plain&quot;});
+    response.write(stdout);
+    response.end();
+  });
+}
+
+function upload(response) {
+  console.log(&quot;Request handler 'upload' was called.&quot;);
+  response.writeHead(200, {&quot;Content-Type&quot;: &quot;text/plain&quot;});
+  response.write(&quot;Hello Upload&quot;);
+  response.end();
+}</code></pre>
+</div><div class="section slide level2" id="lets-see-that-work">
+<h1 id="lets-see-that-work">Let's see that work</h1>
+<p>Go!</p>
+</div><div class="section slide level2" id="lets-make-it-return-a-simple-html-page">
+<h1 id="lets-make-it-return-a-simple-html-page">Let's Make It Return A Simple HTML Page</h1>
 </div>
 <div class="section titleslide slide level1" id="conclusion"><h1 id="conclusion">Conclusion</h1></div><div class="section slide level2" id="questions">
 <h1 id="questions">Questions?</h1>
