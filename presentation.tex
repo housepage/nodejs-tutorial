@@ -1,0 +1,290 @@
+\documentclass[ignorenonframetext,]{beamer}
+\usetheme{Warsaw}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifxetex
+  \usepackage{fontspec,xltxtra,xunicode}
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+\else
+  \ifluatex
+    \usepackage{fontspec}
+    \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \else
+    \usepackage[utf8x]{inputenc}
+  \fi
+\fi
+% Comment these out if you don't want a slide with just the
+% part/section/subsection/subsubsection title:
+\AtBeginPart{\frame{\partpage}}
+\AtBeginSection{\frame{\sectionpage}}
+\AtBeginSubsection{\frame{\subsectionpage}}
+\AtBeginSubsubsection{\frame{\subsubsectionpage}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+
+\title{Node JS : Introduction to Server-Side Javascript}
+\author{Andrew Gall}
+\date{November 9, 2012}
+
+\begin{document}
+\frame{\titlepage}
+
+\section{Introduction}
+
+\begin{frame}\frametitle{My Experience}
+
+\begin{itemize}
+\item
+  Drexel University
+\item
+  Worked for a start-up called CoupedOut for the past two years
+\item
+  Work totally remotely
+\end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{Your Experience}
+
+\begin{itemize}
+\item
+  Java?
+\item
+  Python?
+\item
+  Javascript?
+\item
+  JQuery?
+\end{itemize}
+\end{frame}
+
+\section{Javascript}
+
+\begin{frame}\frametitle{What have you done?}
+
+\begin{itemize}[<+->]
+\item
+  What is it used for?
+\item
+  What have you built with it?
+\end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{What is
+\href{http://en.wikipedia.org/wiki/JavaScript}{Javascript}?}
+
+\begin{itemize}[<+->]
+\item
+  \href{http://en.wikipedia.org/wiki/Scripting\_language}{Scripting
+  Language}
+\item
+  \href{http://en.wikipedia.org/wiki/Prototype-based}{Prototype-based}
+\item
+  \href{http://en.wikipedia.org/wiki/Dynamic\_language}{Dynamic} and
+  \href{http://en.wikipedia.org/wiki/Weak\_typing}{weakly typed}
+\item
+  \href{http://en.wikipedia.org/wiki/First-class\_functions}{First-class
+  functions}
+\end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{Hello World}
+
+\begin{itemize}
+\item
+  Just writes to standard out
+\item
+  File: helloworld.js
+\end{itemize}
+\begin{quote}
+console.log(``Hello World'');
+
+\end{quote}
+\begin{itemize}
+\item
+  Run It:
+\end{itemize}
+\begin{quote}
+node helloworld.js
+
+\end{quote}
+\end{frame}
+
+\section{Node.JS}
+
+\begin{frame}\frametitle{What is
+\href{http://en.wikipedia.org/wiki/Nodejs}{Node JS}?}
+
+\begin{itemize}
+\item
+  Server side software system designed for writing scalable Internet
+  applications, notably web servers.
+\item
+  Written in Javascript using event-driven, asynchronous I/O to minimize
+  overhead and maximize scalability.
+\end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{A Sample Application in Node JS}
+
+Let's keep it simple, but realistic:
+
+\begin{itemize}
+\item
+  The user should be able to use our application with a web browser
+\item
+  The user should see a welcome page when requesting http://domain/start
+  which displays a file upload form
+\item
+  By choosing an image file to upload and submitting the form, this
+  image should then be uploaded to http://domain/upload, where it is
+  displayed once the upload is finished
+\end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{A Couple of Key Parts}
+
+\begin{itemize}
+\item
+  An HTTP Server - We want to serve web pages, therefore we need an HTTP
+  server.
+\item
+  A Router - Our server will need to answer differently to requests,
+  depending on which URL the request was asking for, thus we need some
+  kind of router in order to map requests to request handlers
+\item
+  Request Handlers - To fullfill the requests that arrived at the server
+  and have been routed using the router, we need actual request handlers
+\item
+  Request Data Handling - The router probably should also treat any
+  incoming POST data and give it to the request handlers in a convenient
+  form, thus we need request data handling
+\item
+  We not only want to handle requests for URLs, we also want to display
+  content when these URLs are requested, which means we need some kind
+  of view logic the request handlers can use in order to send content to
+  the user's browser
+\item
+  Upload Handling - Last but not least, the user will be able to upload
+  images, so we are going to need some kind of upload handling which
+  takes care of the details
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Basic HTTP Server}
+
+\begin{verbatim}
+var http = require("http");
+
+http.createServer(function(request, response) {
+   response.writeHead(200, {"Content-Type": "text/plain"});
+   response.write("Hello World");
+   response.end();
+}).listen(8888);
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Break It Down}
+
+\begin{verbatim}
+var http = require("http");
+\end{verbatim}
+The first line requires the http module that ships with Node.js and
+makes it accessible through the variable http.
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Break It Down}
+
+\begin{verbatim}
+var server = http.createServer();
+server.listen(8888); 
+\end{verbatim}
+This part creates the server and makes it listen on port 8888. The
+server currently does nothing.
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Break It Down}
+
+\begin{verbatim}
+http.createServer(function(request, response) {
+   response.writeHead(200, {"Content-Type": "text/plain"});
+   response.write("Hello World");
+   response.end();
+}).listen(8888);
+\end{verbatim}
+We pass a function into the server which it uses to handle all incoming
+requests. We make changes to the response object and then these are
+transmitted when we call:
+
+response.end();
+
+\end{frame}
+
+\section{Asynchronous Callbacks}
+
+\begin{frame}[fragile]\frametitle{Why do we need them?}
+
+\begin{verbatim}
+var result = database.query("SELECT * FROM hugetable");
+console.log("Hello World");
+\end{verbatim}
+\begin{itemize}
+\item
+  Database query might take a long time
+\item
+  Node.JS runs in an event loop
+\item
+  Important characteristics of how things work in Node.JS
+\item
+  If you want to know more, check out
+  \href{http://debuggable.com/posts/understanding-node-js:4bd98440-45e4-4a9a-8ef7-0f7ecbdd56cb}{Felix
+  Geisendörfer's excellent post on node.js}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{It becomes this}
+
+\begin{verbatim}
+database.query("SELECT * FROM hugetable", function(rows) {
+  var result = rows;
+});
+console.log("Hello World");
+\end{verbatim}
+\begin{itemize}
+\item
+  Allows us to do other things while we wait for our results
+\end{itemize}
+\end{frame}
+
+\section{Organization}
+
+\begin{frame}[fragile]\frametitle{Organizing our code into modules}
+
+\begin{verbatim}
+var http = require("http");
+
+function start() {
+  function onRequest(request, response) {
+    /* ... */
+  }
+
+  http.createServer(onRequest).listen(8888);
+  console.log("Server has started.");
+}
+
+exports.start = start;
+\end{verbatim}
+We just need to add the line seen at the bottom here and now this file
+can be imported elsewhere and will expose that function or property. So
+we can do:
+
+\begin{verbatim}
+var server = require('./server');
+server.start() 
+\end{verbatim}
+\end{frame}
+
+\end{document}
